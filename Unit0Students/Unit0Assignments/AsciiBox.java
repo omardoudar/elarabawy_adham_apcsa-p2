@@ -10,6 +10,7 @@ public class AsciiBox
 {
 	public static void main(String[] args)
 	{
+		//draw box
 		System.out.println("name \t  date \n\n" );
 		for(int i = 0; i < 4; i++){
 			System.out.println("++++++++++++++++++++++++++++++++++++ " );
