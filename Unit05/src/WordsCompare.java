@@ -19,15 +19,19 @@ public class WordsCompare
 
 	public WordsCompare(String one, String two)
 	{
+		this.wordOne = one;
+		this.wordTwo = two;
 	}
 
 	public void setWords(String one, String two)
 	{
-
+		this.wordOne = one;
+		this.wordTwo = two;
 	}
 
 	public void compare()
 	{
+
 	}
 
 	public String toString()

@@ -13,5 +13,8 @@ public class StringRunner
 {
 	public static void main ( String[] args )
 	{
+		StringOddOrEven obj = new StringOddOrEven();
+		obj.setString("boot");
+		System.out.println(obj.toString());
 	}
 }
