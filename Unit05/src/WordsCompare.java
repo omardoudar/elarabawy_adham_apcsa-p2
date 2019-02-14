@@ -1,44 +1,30 @@
 //(c) A+ Computer Science
 //www.apluscompsci.com
 
-//Name -
-//Date -
-//Class -
-//Lab  -
+//Name - 
+//Date - 
+//Class - 
+//Lab - 
 
-import static java.lang.System.*;
-
-public class WordsCompare
-{
+public class WordsCompare {
+	
 	private String wordOne, wordTwo;
-   private int compare;
+	private int compare;
 
-	public WordsCompare()
-	{
+	public WordsCompare(String one, String two) {
+		wordOne = one;
+		wordTwo = two;
+		compare();
 	}
 
-	public WordsCompare(String one, String two)
-	{
+	public void compare() {
+		compare = wordOne.compareTo(wordTwo);
 	}
 
-	public void setWords(String one, String two)
-	{
-
-	}
-
-	public void compare()
-	{
-	}
-
-	public String toString()
-	{
-		if(compare<0)
-		{
-			return wordOne + " should be placed before " + wordTwo + "\n";
+	public String toString() {
+		if (compare < 0){
+			return wordOne + " should be placed before " + wordTwo;
 		}
-		else
-		{
-			return wordOne + " should be placed after " + wordTwo + "\n";
-		}
+		return wordOne + " should be placed after " + wordTwo;
 	}
 }

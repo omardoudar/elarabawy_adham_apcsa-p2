@@ -1,36 +1,32 @@
 //(c) A+ Computer Science
 //www.apluscompsci.com
 
-//Name -
-//Date -
-//Class -
-//Lab  -
+//Name - 
+//Date - 
+//Class - 
+//Lab - 
 
-import static java.lang.System.*;
+public class StringEquality {
 
-public class StringEquality
-{
 	private String wordOne, wordTwo;
-
-	public StringEquality()
-	{
+	private boolean isEqual;
+	public StringEquality(String one, String two) {
+		wordOne = one;
+		wordTwo = two;
+		checkEquality();
+	}
+	public void checkEquality() {
+		if(wordOne.equals(wordTwo)) {
+			isEqual = true;
+		} else {
+			isEqual = false;
+		}
 	}
 
-	public StringEquality(String one, String two)
-	{
-	}
-
-	public void setWords(String one, String two)
-	{
-	}
-
-	public boolean checkEquality( )
-	{
-		return false;
-	}
-
-	public String toString()
-	{
-		return wordOne + " does not have the same letters as " + wordTwo + "\n";
+	public String toString() {
+		if(isEqual) {
+			return wordOne + " has the same letters as " + wordTwo;
+		}
+		return wordOne + " does not have the same letters as " + wordTwo;
 	}
 }
