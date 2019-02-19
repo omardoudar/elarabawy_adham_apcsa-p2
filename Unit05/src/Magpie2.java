@@ -39,7 +39,7 @@ public class Magpie2
 			response = "CCA's First Robotics Team is ranked 7th in the world!";
 		} else if(statement.indexOf("cca")>=0){
 			response = "Did you know that CCA uses a quarter system?";
-		} else if(statement.indexOf("dog")>=0 || statement.indexOf("dog")>=0){
+		} else if(statement.indexOf("dog")>=0 || statement.indexOf("cat")>=0){
 			response = "Tell me more about your pets";
 		} else if(statement.indexOf("mauro")>=0){
 			response = "Oh cool! What an awesome teacher!";
