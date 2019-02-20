@@ -1,13 +1,3 @@
-/**
- * A program to carry on conversations with a human user.
- * This version: 
- * <ul><li>
- *    Uses advanced search for keywords 
- * </li></ul> 
- *    
- * @author Laurie White
- * @version April 2012
- */
 public class Magpie3
 {
 	/**
@@ -44,6 +34,43 @@ public class Magpie3
 				|| findKeyword(statement, "brother") >= 0)
 		{
 			response = "Tell me more about your family.";
+		}
+		else if (findKeyword(statement, "dog") >= 0 || findKeyword(statement, "cat") >= 0)
+		{
+			response = "Tell me more about your pets.";
+		}
+
+		else if (findKeyword(statement, "teacher") >= 0 || findKeyword(statement, "Ms.") >= 0)
+		{
+			response = "That sounds like an amazing teacher.";
+		}
+		else if (statement.trim() == "" || statement.length() == 0)
+		{
+			response = "Say something, please.";
+		}
+		else if (findKeyword(statement, "friend") >= 0)
+		{
+			response = "Tell me more about them.";
+		}
+		else if (findKeyword(statement, "me") >= 0 || findKeyword(statement, "myself") >= 0 || statement.indexOf("I") >= 0)
+		{
+			response = "Tell me more about you.";
+		}
+		else if (findKeyword(statement, "HAHA") >= 0)
+		{
+			response = "hehe";
+		}
+		else if (findKeyword(statement, "Thanks") >= 0)
+		{
+			response = "You're welcome!";
+		}
+		else if (findKeyword(statement, "happy") >= 0)
+		{
+			response = "Good.";
+		}
+		else if (findKeyword(statement, "no") >= 0)
+		{
+			response = "Why so negative?";
 		}
 		else
 		{
@@ -144,7 +171,7 @@ public class Magpie3
 	 */
 	private String getRandomResponse()
 	{
-		final int NUMBER_OF_RESPONSES = 4;
+		final int NUMBER_OF_RESPONSES = 6;
 		double r = Math.random();
 		int whichResponse = (int) (r * NUMBER_OF_RESPONSES);
 		String response = "";
@@ -164,6 +191,14 @@ public class Magpie3
 		else if (whichResponse == 3)
 		{
 			response = "You don't say.";
+		}
+		else if (whichResponse == 4)
+		{
+			response = "Huh?";
+		}
+		else if (whichResponse == 5)
+		{
+			response = "Why?";
 		}
 
 		return response;

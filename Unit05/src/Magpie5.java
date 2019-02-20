@@ -1,17 +1,4 @@
 import java.util.Random;
-
-/**
- * A program to carry on conversations with a human user.
- * This version:
- *<ul><li>
- * 		Uses advanced search for keywords 
- *</li><li>
- * 		Will transform statements as well as react to keywords
- *</li></ul>
- * This version uses an array to hold the default responses.
- * @author Laurie White
- * @version April 2012
- */
 public class Magpie5
 {
 	/**
@@ -53,12 +40,12 @@ public class Magpie5
 		// Responses which require transformations
 		else if (findKeyword(statement, "I want to", 0) >= 0)
 		{
-			response = transformIWantToStatement(statement);
+			response = transformWantStatement(statement);
 		}
 		//  Part of student solution
 		else if (findKeyword(statement, "I want", 0) >= 0)
 		{
-			response = transformIWantStatement(statement);
+			response = transformWantStatement(statement);
 		}
 
 		else
@@ -68,8 +55,7 @@ public class Magpie5
 			// pattern
 			int psn = findKeyword(statement, "you", 0);
 
-			if (psn >= 0
-					&& findKeyword(statement, "me", psn) >= 0)
+			if (psn >= 0 && findKeyword(statement, "me", psn) >= 0)
 			{
 				response = transformYouMeStatement(statement);
 			}
@@ -80,8 +66,7 @@ public class Magpie5
 				// pattern
 				psn = findKeyword(statement, "i", 0);
 
-				if (psn >= 0
-						&& findKeyword(statement, "you", psn) >= 0)
+				if (psn >= 0 && findKeyword(statement, "you", psn) >= 0)
 				{
 					response = transformIYouStatement(statement);
 				}
@@ -100,9 +85,8 @@ public class Magpie5
 	 * @param statement the user statement, assumed to contain "I want to"
 	 * @return the transformed statement
 	 */
-	private String transformIWantToStatement(String statement)
+	private String transformWantStatement(String statement)
 	{
-		//  Remove the final period, if there is one
 		statement = statement.trim();
 		String lastChar = statement.substring(statement
 				.length() - 1);
@@ -123,7 +107,7 @@ public class Magpie5
 	 * @param statement the user statement, assumed to contain "I want"
 	 * @return the transformed statement
 	 */
-	private String transformIWantStatement(String statement)
+	private String transformWantStatement(String statement)
 	{
 		//  Remove the final period, if there is one
 		statement = statement.trim();
@@ -222,8 +206,7 @@ public class Magpie5
 			}
 			
 			//  If before and after aren't letters, we've found the word
-			if (((before.compareTo ("a") < 0 ) || (before.compareTo("z") > 0))  //  before is not a letter
-					&& ((after.compareTo ("a") < 0 ) || (after.compareTo("z") > 0)))
+			if (((before.compareTo ("a") < 0 ) || (before.compareTo("z") > 0)) && ((after.compareTo ("a") < 0 ) || (after.compareTo("z") > 0)))
 			{
 				return psn;
 			}
@@ -248,8 +231,6 @@ public class Magpie5
 	{
 		return findKeyword (statement, goal, 0);
 	}
-	
-
 
 	/**
 	 * Pick a default response to use if nothing else fits.
@@ -264,7 +245,9 @@ public class Magpie5
 	private String [] randomResponses = {"Interesting, tell me more",
 			"Hmmm.",
 			"Do you really think so?",
-			"You don't say."
+			"You don't say.",
+			"???",
+			"Why?"
 	};
 	
 }
