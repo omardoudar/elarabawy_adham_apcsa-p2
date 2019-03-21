@@ -36,14 +36,33 @@ public class Deck {
 	 */
 	public Deck(String[] ranks, String[] suits, int[] values) {
 		
+		//Array Code
+		/*
+		cards = new Card[ranks.length * suits.length];
+		size = ranks.length + suits.length;
+		int index = 0;
+		for (int rank = 0; rank < ranks.length; rank++)
+		{
+			for (int suit = 0; suit < suits.length; suit++)
+			{
+				cards[index] = new Card(ranks[rank], suits[suit], values[rank]);
+				index += 1;
+			}
+		}
+		*/
+		
+		//ArrayList Code
 		size = ranks.length * suits.length;
-		for (int rank = 0; rank < ranks.length; rank++) {
-			for (String suit: suits) {
+		for (int rank = 0; rank < ranks.length; rank++)
+		{
+			for (String suit: suits)
+			{
 				cards.add(new Card(ranks[rank], suit, values[rank]));
 			}
 		}
 		
 	}
+
 
 	/**
 	 * Determines if this deck is empty (no undealt cards).
@@ -70,14 +89,30 @@ public class Deck {
 	 */
 	public void shuffle() {
 		
-		Card copyVals;
-		int shuffleI;
+		Card copyValues;
+		int shuffleIndex;
 		
-		for (int i = cards.size() - 1; i >= 0; i--) {
-			shuffleI = (int)(Math.random() * (i +1));
-			copyVals = cards.get(shuffleI);
-			cards.add(shuffleI, cards.get(i));
-			cards.add(i, copyVals);
+		//Array Code
+		/*
+		for (int i = cards.length - 1; i >= 0; i--)
+		{
+			int howMany = i + 1;
+			shuffleIndex = (int)(Math.random() * howMany);
+			copyValues = cards[shuffleIndex];
+			cards[shuffleIndex] = cards[i];
+			cards[i] = copyValues;
+			size = cards.length;
+			
+		}
+		*/
+		
+		//ArrayList Code
+		for (int i = cards.size() - 1; i >= 0; i--)
+		{
+			shuffleIndex = (int)(Math.random() * (i +1));
+			copyValues = cards.get(shuffleIndex);
+			cards.add(shuffleIndex, cards.get(i));
+			cards.add(i, copyValues);
 			
 		}
 		
@@ -112,35 +147,65 @@ public class Deck {
 	@Override
 	public String toString() {
 		
-		
-		String rt = "size = " + size + "\nUndealt cards: \n";
-		
-		for (int k = size - 1; k >= 0; k--) 
-		{
-			rt = rt + cards.get(k);
+		//Array code
+		/*
+		String rtn = "size = " + size + "\nUndealt cards: \n";
+
+		for (int k = size - 1; k >= 0; k--) {
+			rtn = rtn + cards[k];
 			if (k != 0) {
-				rt = rt + ", ";
+				rtn = rtn + ", ";
 			}
-			if ((size - k) % 2 == 0) 
-			{
-				rt = rt + "\n";
+			if ((size - k) % 2 == 0) {
+				// Insert carriage returns so entire deck is visible on console.
+				rtn = rtn + "\n";
 			}
 		}
 
-		rt = rt + "\nDealt cards: \n";
-		for (int k = cards.size() - 1; k >= size; k--) 
-		{
-			rt = rt + cards.get(k);
+		rtn = rtn + "\nDealt cards: \n";
+		for (int k = cards.length - 1; k >= size; k--) {
+			rtn = rtn + cards[k];
 			if (k != size) {
-				rt = rt + ", ";
+				rtn = rtn + ", ";
 			}
-			if ((k - cards.size()) % 2 == 0) 
-			{
-				rt = rt + "\n";
+			if ((k - cards.length) % 2 == 0) {
+				// Insert carriage returns so entire deck is visible on console.
+				rtn = rtn + "\n";
 			}
 		}
-		rt = rt + "\n";
-		return rt;
+
+		rtn = rtn + "\n";
+		return rtn;
+		*/
+		
+		//ArrayList code
+		String rtn = "size = " + size + "\nUndealt cards: \n";
+		
+		for (int k = size - 1; k >= 0; k--) {
+			rtn = rtn + cards.get(k);
+			if (k != 0) {
+				rtn = rtn + ", ";
+			}
+			if ((size - k) % 2 == 0) {
+				// Insert carriage returns so entire deck is visible on console.
+				rtn = rtn + "\n";
+			}
+		}
+
+		rtn = rtn + "\nDealt cards: \n";
+		for (int k = cards.size() - 1; k >= size; k--) {
+			rtn = rtn + cards.get(k);
+			if (k != size) {
+				rtn = rtn + ", ";
+			}
+			if ((k - cards.size()) % 2 == 0) {
+				// Insert carriage returns so entire deck is visible on console.
+				rtn = rtn + "\n";
+			}
+		}
+
+		rtn = rtn + "\n";
+		return rtn;
 		
 	}
 }
