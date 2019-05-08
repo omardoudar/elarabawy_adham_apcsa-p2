@@ -12,60 +12,69 @@ public class Paddle extends Block
 
    public Paddle()
    {
-	  this(10, 10);
+	 super(10,10);
+     speed = 5;
+   }
+   //add the other Paddle constructors
+   public Paddle(int x,int y) {
+	  super(x,y);
+	  speed = 5;
+   }
+   public Paddle(int x, int y,int nSpeed) {
+	   super(x,y);
+	   speed = nSpeed;
+   }
+   public Paddle(int x, int y,int width,int height) {
+	   super(x,y,width,height);
+	   speed = 5;
+   }
+   public Paddle(int x, int y,int width,int height,Color color) {
+	   super(x,y,width,height,color);
+	   speed = 5;
+   }
+   public Paddle(int x, int y,int width,int height,int nSpeed) {
+	   super(x,y,width,height);
+	   speed = nSpeed;
+   }
+   public Paddle(int x, int y,int width,int height,Color color,int nSpeed) {
+	   super(x,y,width,height,color);
+	   speed = nSpeed;
    }
 
-   public Paddle(int x, int y)
-   {
-	   super(x, y, 10, 10, Color.BLACK);
-	   setSpeed(5);
+   public void setSpeed(int newS) {
+	   speed = newS;
    }
-   
-   public Paddle (int x, int y, int spee)
-   {
-	   super(x, y, 10, 10, Color.BLACK);
-	   setSpeed(spee);
-   }
-   
-   public Paddle (int x, int y, int width, int height, int spee)
-   {
-	   super (x, y, width, height, Color.BLACK);
-	   setSpeed(spee);
-   }
-   
-   public Paddle (int x, int y, int width, int height, Color col, int spee)
-   {
-	   super (x, y, width, height, col);
-	   setSpeed(spee);
-   }
-   
-   public void setSpeed(int spee)
-   {
-	   speed = spee;
-   }
-
+	   
+  
    public void moveUpAndDraw(Graphics window)
    {
-	   draw(window, Color.WHITE);
-	   setY(getY()-speed);
+	   setY(getY() + speed);
 	   draw(window);
+
    }
 
    public void moveDownAndDraw(Graphics window)
    {
-	   draw(window, Color.WHITE);
-	   setY(getY()+speed);
+	   setY(getY() - speed);
+	   draw(window);
+
+   }
+   public void moveLeftAndDraw(Graphics window) {
+	   setX(getX() -speed);
 	   draw(window);
    }
-
-   public int getSpeed()
-   {
-	   return speed;
-   }   
-   
-   public String toString()
-   {
-	   return super.toString()+" "+speed;
+   public void moveRightAndDraw(Graphics window) {
+	   setX(getX() + speed);
+	   draw(window);
    }
+   //add get methods
+   public int getSpeed() {
+	   return speed;
+   }
+   
    //add a toString() method
+   public String toString() {
+	return getX() + "," + getY() + "," +  getWidth() + ","  + getHeight() + "," + getColor().toString() + "," + speed;
+	   
+   }
 }
