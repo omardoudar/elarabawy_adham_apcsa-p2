@@ -175,7 +175,13 @@ public class PictureTester
     swan.edgeDetection2(20);
     swan.explore();
   }
-  
+  public static void testEncodeAndDecode()
+  {
+    Picture beach = new Picture("src/images/beach.jpg");
+    beach.explore();
+    beach.encode();
+    beach.explore();
+  }
   /** Main method for testing.  Every class can have a main
     * method in Java */
   public static void main(String[] args)
