@@ -178,9 +178,13 @@ public class PictureTester
   public static void testEncodeAndDecode()
   {
     Picture beach = new Picture("src/images/beach.jpg");
+    Picture msg = new Picture("src/images/msg.jpg");
+    msg.explore();
     beach.explore();
-    beach.encode();
+    beach.encode(msg);
     beach.explore();
+    Picture decoded = beach.decode();
+    decoded.explore();
   }
   /** Main method for testing.  Every class can have a main
     * method in Java */
@@ -214,7 +218,7 @@ public class PictureTester
 	
     //testEdgeDetection2();
     //testChromakey();
-    //testEncodeAndDecode();
+    testEncodeAndDecode();
     //testGetCountRedOverValue(250);
     //testSetRedToHalfValueInTopHalf();
     //testClearBlueOverValue(200);

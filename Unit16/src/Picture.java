@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A class that represents a picture. This class inherits from SimplePicture and
@@ -360,11 +361,13 @@ public class Picture extends SimplePicture {
 	}
 
 	public void encode(Picture messagePict) {
+		boolean SHOW_DEBUG = true;
 		// var init
 		Pixel[][] messagePixels = messagePict.getPixels2D();
+		Pixel[][] currImage = this.getPixels2D();
 		Pixel currPixel = null;
 
-		ArrayList<String> pixelLocations = new ArrayList<String>();
+		ArrayList<ArrayList<Integer>> pixelLocations = new ArrayList<ArrayList<Integer>>();
 		boolean isLookingForBlack;
 
 		// temp init
@@ -380,35 +383,188 @@ public class Picture extends SimplePicture {
 				} else {
 					whiteCount++;
 				}
+				currPixel.setBlue(currPixel.getBlue() + ((currImage[row][col].getBlue()%2==0) ? 0 : 1));
 			}
 		}
 
-		isLookingForBlack = (blackCount >= whiteCount);
+		isLookingForBlack = true;//(blackCount >= whiteCount);
 
 		for (int row = 0; row < messagePict.getHeight(); row++) {
 			for (int col = 0; col < messagePict.getWidth(); col++) {
-				if (isLookingForBlack) {
-
+				if (isBlack(messagePixels[row][col])) {
+					if(isLookingForBlack) {
+						//debug
+						System.out.println("row: " + row + " col: " + col);
+						pixelLocations.add(convertToBinary(row));
+						System.out.println("row: " + convertToBinary(row) + " col: " + convertToBinary(col));
+						System.out.println("row: " + getIntFromBinary(convertToBinary(row)) + " col: " + getIntFromBinary(convertToBinary(col)));
+						pixelLocations.add(convertToBinary(col));
+						if(SHOW_DEBUG) currImage[row][col].setColor(Color.MAGENTA);
+						
+					}
+				} else {
+					if(!isLookingForBlack) {
+						pixelLocations.add(convertToBinary(row));
+						pixelLocations.add(convertToBinary(col));
+					}
 				}
 			}
 		}
+		currImage[getIntFromBinary(pixelLocations.get(pixelLocations.size() - 2))][getIntFromBinary(pixelLocations.get(pixelLocations.size() - 1))].setBlue(currImage[getIntFromBinary(pixelLocations.get(pixelLocations.size() - 2))][getIntFromBinary(pixelLocations.get(pixelLocations.size() - 1))].getBlue() + 1);
+		//temp init v2
+		int row = 0;
+		int col = 0;
+		int i = 0;
+		System.out.println(pixelLocations.get(1));
+		System.out.println(getIntFromBinary(pixelLocations.get(1)));
+		for(int b = 0; b < pixelLocations.size(); b++) {
+			ArrayList<Integer> binarySet = pixelLocations.get(b);
+			boolean isRow = (i%2 == 0);
+			//System.out.println(pixelLocations.size());
+			for(int binaryVal : binarySet) {
+				//System.out.println("row" + row + " col" + col);
+				//System.out.println(currImage[row][col].getGreen());
+				if(isRow) {
+					currImage[row][col].setGreen(currImage[row][col].getGreen() + ((currImage[row][col].getGreen()%2==0) ? 0 : 1));
+				} else {
+					currImage[row][col].setGreen(currImage[row][col].getGreen() + ((currImage[row][col].getGreen()%2==0) ? 1 : 0));
+				}
+				
+				if(binaryVal == 0) {
+					currImage[row][col].setRed(currImage[row][col].getRed() + ((currImage[row][col].getRed()%2==0) ? 0 : 1));
+				} else if(binaryVal == 1){
+					currImage[row][col].setRed(currImage[row][col].getRed() + ((currImage[row][col].getRed()%2==0) ? 1 : 0));
+				}
+				//System.out.println(currImage[0].length);
+				if(col==639) {
+					col = 0;
+					row++;
+				} else {
+					col++;
+				}
+			}
+			i++;
+			
+		}
+		
+		
+		System.out.println("--------------------------------------");
+		System.out.println("--------------------------------------");
+		System.out.println("--------------------------------------");
+		System.out.println("--------------------------------------");
+		System.out.println("--------------------------------------");
 
 	}
 
+	public static ArrayList<Integer> convertToBinary(int num){
+	    ArrayList<Integer> binary = new ArrayList<Integer>();
+	    String temp = Integer.toBinaryString(num);
+	    ArrayList<String> out = new ArrayList<String>(Arrays.asList(temp.split("")));
+	    return getIntegerArray(out);
+	}
+	
+	private static ArrayList<Integer> getIntegerArray(ArrayList<String> stringArray) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(String stringValue : stringArray) {
+            try {
+                //Convert String to Integer, and store it into integer array list.
+                result.add(Integer.parseInt(stringValue));
+            } catch(NumberFormatException nfe) {
+               //System.out.println("Could not parse " + nfe);
+                //Log.w("NumberFormat", "Parsing failed! " + stringValue + " can not be an integer");
+            } 
+        }       
+        return result;
+    }
+	
 	public static boolean isBlack(Pixel pixel) {
-		int currRed = pixel.getRed();
+		/*int currRed = pixel.getRed();
 
 		// checks to see if the distance to pure white is closer than the distance to
 		// pure black
+		
+		//if distance to black is smaller than distance to white
 		if (currRed < 255 - currRed) {
-			return false;
-		} else {
 			return true;
+		} else {
+			return false;
+		}*/
+		
+		double distFromWhite = Math.abs(pixel.colorDistance(Color.WHITE));
+		double distFromBlack = Math.abs(pixel.colorDistance(Color.BLACK));
+		
+		if(distFromWhite < distFromBlack) {
+			return false;
 		}
+		return true;
+		
 	}
 
 	public static String getStringFromPixel(int row, int col) {
 		return String.format("%03d", row) + String.format("%03d", col);
+	}
+	
+	public static int getIntFromBinary(ArrayList<Integer> temp) {
+		String intString = "";
+		for (int bit : temp) {
+		    intString += bit + "";
+		}
+		
+		try {
+			return Integer.parseInt(intString, 2);
+		} catch(Exception e) {
+			return 1000;
+		}
+	}
+	
+	public Picture decode() {
+		Pixel[][] pixels = this.getPixels2D();
+		int height = this.getHeight();
+		int width = this.getWidth();
+		Pixel currPixel = null;
+
+		ArrayList<ArrayList<Integer>> blackLocations = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> tempBinarySet = new ArrayList<Integer>();
+		int binarySetIndex = 0;
+		int pastIndex = 0;
+		int tempIndex = 0;
+		for(int row = 0; row < height; row++) {
+			for(int col = 0; col< width; col++) {
+				binarySetIndex = (pixels[row][col].getGreen() % 2 == 0) ? 0 : 1;
+				if(binarySetIndex != pastIndex) {
+					if(tempIndex%2==0 && tempIndex>0)
+						if(pixels[getIntFromBinary(tempBinarySet)][getIntFromBinary(blackLocations.get(blackLocations.size() - 1))].getBlue() % 2 != 0) break;
+					blackLocations.add(tempBinarySet);
+					tempIndex++;
+					tempBinarySet = new ArrayList<Integer>();
+				}
+				if(pixels[row][col].getRed() % 2 != 0) {
+					tempBinarySet.add(1);
+				} else {
+					tempBinarySet.add(0);
+				}
+				pastIndex = binarySetIndex;
+				
+			}
+		}
+		
+		Pixel messagePixel = null;
+		Picture messagePicture = new Picture(height,width);
+		Pixel[][] messagePixels = messagePicture.getPixels2D();
+		System.out.println(blackLocations.get(1));
+		System.out.println(getIntFromBinary(blackLocations.get(1)));
+		int row = 0;
+		int col = 0;
+		for(int i = 0; i < blackLocations.size()/2; i+=2) {
+			row = getIntFromBinary(blackLocations.get(i));
+			col = getIntFromBinary(blackLocations.get(i+1));
+			System.out.println("row: " + row + " col: " + col);
+			System.out.println("row: " + blackLocations.get(i) + " col: " + blackLocations.get(i+1));
+			if(row < height && col < width){
+				messagePixels[row][col].setColor(Color.BLACK);
+			}
+		}
+		return messagePicture;
 	}
 
 	/** Method to create a collage of several pictures */
@@ -533,7 +689,7 @@ public class Picture extends SimplePicture {
 	 * Main method for testing - each class in Java can have a main method
 	 */
 	public static void main(String[] args) {
-		System.out.println(getStringFromPixel(123, 12));
+		//System.out.println(getStringFromPixel(123, 12));
 	}
 
 } // this } is the end of class Picture, put all new methods before this
