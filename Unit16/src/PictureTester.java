@@ -183,7 +183,8 @@ public class PictureTester
     beach.explore();
     beach.encode(msg);
     beach.explore();
-    beach = beach.decode();
+    Picture decoded = beach.decode();
+    decoded.explore();
   }
   /** Main method for testing.  Every class can have a main
     * method in Java */

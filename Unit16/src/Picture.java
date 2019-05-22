@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * A class that represents a picture. This class inherits from SimplePicture and
@@ -390,7 +391,10 @@ public class Picture extends SimplePicture {
 			for (int col = 0; col < messagePict.getWidth(); col++) {
 				if (isBlack(messagePixels[row][col])) {
 					if(isLookingForBlack) {
+						System.out.println("row: " + row + " col: " + col);
 						pixelLocations.add(convertToBinary(row));
+						System.out.println("row: " + convertToBinary(row) + " col: " + convertToBinary(col));
+						System.out.println("row: " + getIntFromBinary(convertToBinary(row)) + " col: " + getIntFromBinary(convertToBinary(col)));
 						pixelLocations.add(convertToBinary(col));
 					}
 				} else {
@@ -406,14 +410,15 @@ public class Picture extends SimplePicture {
 		int row = 0;
 		int col = 0;
 		int i = 0;
-		
+		System.out.println(pixelLocations.get(1));
+		System.out.println(getIntFromBinary(pixelLocations.get(1)));
 		for(int b = 0; b < pixelLocations.size(); b++) {
 			ArrayList<Integer> binarySet = pixelLocations.get(b);
 			boolean isRow = (i%2 == 0);
-			System.out.println(pixelLocations.size());
+			//System.out.println(pixelLocations.size());
 			for(int binaryVal : binarySet) {
-				System.out.println("row" + row + " col" + col);
-				System.out.println(currImage[row][col].getGreen());
+				//System.out.println("row" + row + " col" + col);
+				//System.out.println(currImage[row][col].getGreen());
 				if(isRow) {
 					currImage[row][col].setGreen(currImage[row][col].getGreen() - ((currImage[row][col].getGreen()%2==0) ? 0 : 1));
 				} else {
@@ -425,7 +430,7 @@ public class Picture extends SimplePicture {
 				} else {
 					currImage[row][col].setRed(currImage[row][col].getRed() - ((currImage[row][col].getRed()%2==0) ? 1 : 0));
 				}
-				System.out.println(currImage[0].length);
+				//System.out.println(currImage[0].length);
 				if(col==639) {
 					col = 0;
 					row++;
@@ -434,23 +439,35 @@ public class Picture extends SimplePicture {
 				}
 			}
 			i++;
+			
 		}
 		
 		
-		
+		System.out.println("--------------------------------------");
 
 	}
 
 	public static ArrayList<Integer> convertToBinary(int num){
 	    ArrayList<Integer> binary = new ArrayList<Integer>();
-	    int i = 0;
-	    while (num > 0){
-	        binary.add(i,num%2);
-	        i++;
-	        num = num/2;
-	    }
-	    return binary;
+	    String temp = Integer.toBinaryString(num);
+	    ArrayList<String> out = new ArrayList<String>(Arrays.asList(temp.split("")));
+	    return getIntegerArray(out);
 	}
+	
+	private static ArrayList<Integer> getIntegerArray(ArrayList<String> stringArray) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(String stringValue : stringArray) {
+            try {
+                //Convert String to Integer, and store it into integer array list.
+                result.add(Integer.parseInt(stringValue));
+            } catch(NumberFormatException nfe) {
+               //System.out.println("Could not parse " + nfe);
+                //Log.w("NumberFormat", "Parsing failed! " + stringValue + " can not be an integer");
+            } 
+        }       
+        return result;
+    }
+	
 	public static boolean isBlack(Pixel pixel) {
 		int currRed = pixel.getRed();
 
@@ -472,8 +489,10 @@ public class Picture extends SimplePicture {
 	public static int getIntFromBinary(ArrayList<Integer> temp) {
 		String intString = "";
 		for (int bit : temp) {
-		    listString += s + "\t";
+		    intString += bit + "";
 		}
+		
+		return Integer.parseInt(intString, 2);
 	}
 	
 	public Picture decode() {
@@ -484,8 +503,8 @@ public class Picture extends SimplePicture {
 
 		ArrayList<ArrayList<Integer>> blackLocations = new ArrayList<ArrayList<Integer>>();
 		ArrayList<Integer> tempBinarySet = new ArrayList<Integer>();
-		int binarySetIndex = (pixels[0][0].getGreen() % 2 == 0) ? 0 : 1;
-		int pastIndex = (pixels[0][0].getGreen() % 2 == 0) ? 0 : 1;
+		int binarySetIndex = 0;
+		int pastIndex = 0;
 		for(int row = 0; row < height; row++) {
 			for(int col = 0; col< width; col++) {
 				binarySetIndex = (pixels[row][col].getGreen() % 2 == 0) ? 0 : 1;
@@ -493,12 +512,12 @@ public class Picture extends SimplePicture {
 					blackLocations.add(tempBinarySet);
 					tempBinarySet = new ArrayList<Integer>();
 				}
-				if(pixels[row][col].getRed() % 2 == 0) {
-					tempBinarySet.add(0);
-				} else {
+				if(pixels[row][col].getRed() % 2 != 0) {
 					tempBinarySet.add(1);
+				} else {
+					tempBinarySet.add(0);
 				}
-				pastIndex = (pixels[row][col].getGreen() % 2 == 0) ? 0 : 1;
+				pastIndex = binarySetIndex;
 				
 			}
 		}
@@ -506,22 +525,17 @@ public class Picture extends SimplePicture {
 		Pixel messagePixel = null;
 		Picture messagePicture = new Picture(height,width);
 		Pixel[][] messagePixels = messagePicture.getPixels2D();
-		int tempIndex = 0;
-		
-		for(int i = 0; i < blackLocations.size()/2; i++) {
+		System.out.println(blackLocations.get(1));
+		System.out.println(getIntFromBinary(blackLocations.get(1)));
+		for(int i = 0; i < blackLocations.size()/2; i+=2) {
 			
-			int row = blackLocations.get(tempIndex);
-			
+			int row = getIntFromBinary(blackLocations.get(i));
+			int col = getIntFromBinary(blackLocations.get(i+1));
+			System.out.println("row: " + row + " col: " + col);
+			System.out.println("row: " + blackLocations.get(i) + " col: " + blackLocations.get(i+1));
 			messagePixels[row][col].setColor(Color.BLACK);
 		}
-		
-		
-		
-		messagePixel.setColor(Color.BLACK);
-		count++;
-		
-		System.out.println(count);
-		return messagePicture;
+			return messagePicture;
 	}
 
 	/** Method to create a collage of several pictures */
@@ -646,7 +660,7 @@ public class Picture extends SimplePicture {
 	 * Main method for testing - each class in Java can have a main method
 	 */
 	public static void main(String[] args) {
-		System.out.println(getStringFromPixel(123, 12));
+		//System.out.println(getStringFromPixel(123, 12));
 	}
 
 } // this } is the end of class Picture, put all new methods before this
