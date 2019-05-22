@@ -362,9 +362,10 @@ public class Picture extends SimplePicture {
 	public void encode(Picture messagePict) {
 		// var init
 		Pixel[][] messagePixels = messagePict.getPixels2D();
+		Pixel[][] currImage = this.getPixels2D();
 		Pixel currPixel = null;
 
-		ArrayList<String> pixelLocations = new ArrayList<String>();
+		ArrayList<ArrayList<Integer>> pixelLocations = new ArrayList<ArrayList<Integer>>();
 		boolean isLookingForBlack;
 
 		// temp init
@@ -383,32 +384,144 @@ public class Picture extends SimplePicture {
 			}
 		}
 
-		isLookingForBlack = (blackCount >= whiteCount);
+		isLookingForBlack = true;//(blackCount >= whiteCount);
 
 		for (int row = 0; row < messagePict.getHeight(); row++) {
 			for (int col = 0; col < messagePict.getWidth(); col++) {
-				if (isLookingForBlack) {
-
+				if (isBlack(messagePixels[row][col])) {
+					if(isLookingForBlack) {
+						pixelLocations.add(convertToBinary(row));
+						pixelLocations.add(convertToBinary(col));
+					}
+				} else {
+					if(!isLookingForBlack) {
+						pixelLocations.add(convertToBinary(row));
+						pixelLocations.add(convertToBinary(col));
+					}
 				}
 			}
 		}
+		
+		//temp init v2
+		int row = 0;
+		int col = 0;
+		int i = 0;
+		
+		for(int b = 0; b < pixelLocations.size(); b++) {
+			ArrayList<Integer> binarySet = pixelLocations.get(b);
+			boolean isRow = (i%2 == 0);
+			System.out.println(pixelLocations.size());
+			for(int binaryVal : binarySet) {
+				System.out.println("row" + row + " col" + col);
+				System.out.println(currImage[row][col].getGreen());
+				if(isRow) {
+					currImage[row][col].setGreen(currImage[row][col].getGreen() - ((currImage[row][col].getGreen()%2==0) ? 0 : 1));
+				} else {
+					currImage[row][col].setGreen(currImage[row][col].getGreen() - ((currImage[row][col].getGreen()%2==0) ? 1 : 0));
+				}
+				
+				if(binaryVal == 0) {
+					currImage[row][col].setRed(currImage[row][col].getRed() - ((currImage[row][col].getRed()%2==0) ? 0 : 1));
+				} else {
+					currImage[row][col].setRed(currImage[row][col].getRed() - ((currImage[row][col].getRed()%2==0) ? 1 : 0));
+				}
+				System.out.println(currImage[0].length);
+				if(col==639) {
+					col = 0;
+					row++;
+				} else {
+					col++;
+				}
+			}
+			i++;
+		}
+		
+		
+		
 
 	}
 
+	public static ArrayList<Integer> convertToBinary(int num){
+	    ArrayList<Integer> binary = new ArrayList<Integer>();
+	    int i = 0;
+	    while (num > 0){
+	        binary.add(i,num%2);
+	        i++;
+	        num = num/2;
+	    }
+	    return binary;
+	}
 	public static boolean isBlack(Pixel pixel) {
 		int currRed = pixel.getRed();
 
 		// checks to see if the distance to pure white is closer than the distance to
 		// pure black
+		
+		//if distance to white is smaller than distance to black
 		if (currRed < 255 - currRed) {
-			return false;
-		} else {
 			return true;
+		} else {
+			return false;
 		}
 	}
 
 	public static String getStringFromPixel(int row, int col) {
 		return String.format("%03d", row) + String.format("%03d", col);
+	}
+	
+	public static int getIntFromBinary(ArrayList<Integer> temp) {
+		String intString = "";
+		for (int bit : temp) {
+		    listString += s + "\t";
+		}
+	}
+	
+	public Picture decode() {
+		Pixel[][] pixels = this.getPixels2D();
+		int height = this.getHeight();
+		int width = this.getWidth();
+		Pixel currPixel = null;
+
+		ArrayList<ArrayList<Integer>> blackLocations = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> tempBinarySet = new ArrayList<Integer>();
+		int binarySetIndex = (pixels[0][0].getGreen() % 2 == 0) ? 0 : 1;
+		int pastIndex = (pixels[0][0].getGreen() % 2 == 0) ? 0 : 1;
+		for(int row = 0; row < height; row++) {
+			for(int col = 0; col< width; col++) {
+				binarySetIndex = (pixels[row][col].getGreen() % 2 == 0) ? 0 : 1;
+				if(binarySetIndex != pastIndex) {
+					blackLocations.add(tempBinarySet);
+					tempBinarySet = new ArrayList<Integer>();
+				}
+				if(pixels[row][col].getRed() % 2 == 0) {
+					tempBinarySet.add(0);
+				} else {
+					tempBinarySet.add(1);
+				}
+				pastIndex = (pixels[row][col].getGreen() % 2 == 0) ? 0 : 1;
+				
+			}
+		}
+		
+		Pixel messagePixel = null;
+		Picture messagePicture = new Picture(height,width);
+		Pixel[][] messagePixels = messagePicture.getPixels2D();
+		int tempIndex = 0;
+		
+		for(int i = 0; i < blackLocations.size()/2; i++) {
+			
+			int row = blackLocations.get(tempIndex);
+			
+			messagePixels[row][col].setColor(Color.BLACK);
+		}
+		
+		
+		
+		messagePixel.setColor(Color.BLACK);
+		count++;
+		
+		System.out.println(count);
+		return messagePicture;
 	}
 
 	/** Method to create a collage of several pictures */
