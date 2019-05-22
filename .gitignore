@@ -1,2 +1,4 @@
 /.metadata/
 /.recommenders/
+.metadata/.log
+.metadata/version.ini
