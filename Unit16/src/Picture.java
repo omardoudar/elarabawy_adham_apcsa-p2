@@ -361,7 +361,7 @@ public class Picture extends SimplePicture {
 	}
 
 	public void encode(Picture messagePict) {
-		boolean SHOW_DEBUG = true;
+		boolean SHOW_DEBUG = false;
 		// var init
 		Pixel[][] messagePixels = messagePict.getPixels2D();
 		Pixel[][] currImage = this.getPixels2D();
@@ -383,7 +383,6 @@ public class Picture extends SimplePicture {
 				} else {
 					whiteCount++;
 				}
-				currPixel.setBlue(currPixel.getBlue() + ((currImage[row][col].getBlue()%2==0) ? 0 : 1));
 			}
 		}
 
@@ -391,6 +390,7 @@ public class Picture extends SimplePicture {
 
 		for (int row = 0; row < messagePict.getHeight(); row++) {
 			for (int col = 0; col < messagePict.getWidth(); col++) {
+				currImage[row][col].setBlue(currImage[row][col].getBlue() + ((currImage[row][col].getBlue()%2==0) ? 0 : 1));
 				if (isBlack(messagePixels[row][col])) {
 					if(isLookingForBlack) {
 						//debug
@@ -399,7 +399,7 @@ public class Picture extends SimplePicture {
 						System.out.println("row: " + convertToBinary(row) + " col: " + convertToBinary(col));
 						System.out.println("row: " + getIntFromBinary(convertToBinary(row)) + " col: " + getIntFromBinary(convertToBinary(col)));
 						pixelLocations.add(convertToBinary(col));
-						if(SHOW_DEBUG) currImage[row][col].setColor(Color.MAGENTA);
+						//if(SHOW_DEBUG) currImage[row][col].setColor(Color.MAGENTA);
 						
 					}
 				} else {
@@ -410,7 +410,7 @@ public class Picture extends SimplePicture {
 				}
 			}
 		}
-		currImage[getIntFromBinary(pixelLocations.get(pixelLocations.size() - 2))][getIntFromBinary(pixelLocations.get(pixelLocations.size() - 1))].setBlue(currImage[getIntFromBinary(pixelLocations.get(pixelLocations.size() - 2))][getIntFromBinary(pixelLocations.get(pixelLocations.size() - 1))].getBlue() + 1);
+		//currImage[getIntFromBinary(pixelLocations.get(pixelLocations.size() - 2))][getIntFromBinary(pixelLocations.get(pixelLocations.size() - 1))].setBlue(currImage[getIntFromBinary(pixelLocations.get(pixelLocations.size() - 2))][getIntFromBinary(pixelLocations.get(pixelLocations.size() - 1))].getBlue() + 1);
 		//temp init v2
 		int row = 0;
 		int col = 0;
@@ -421,9 +421,11 @@ public class Picture extends SimplePicture {
 			ArrayList<Integer> binarySet = pixelLocations.get(b);
 			boolean isRow = (i%2 == 0);
 			//System.out.println(pixelLocations.size());
+			binaryLoop:
 			for(int binaryVal : binarySet) {
 				//System.out.println("row" + row + " col" + col);
 				//System.out.println(currImage[row][col].getGreen());
+				currImage[row][col].setBlue(currImage[row][col].getBlue() + ((currImage[row][col].getBlue()%2==0) ? 1 : 0));
 				if(isRow) {
 					currImage[row][col].setGreen(currImage[row][col].getGreen() + ((currImage[row][col].getGreen()%2==0) ? 0 : 1));
 				} else {
@@ -439,6 +441,9 @@ public class Picture extends SimplePicture {
 				if(col==639) {
 					col = 0;
 					row++;
+				} else if(row==479) {
+					System.out.println("FATAL ERROR: RAN OUT OF SPACE TO ENCODE!");
+					break binaryLoop;
 				} else {
 					col++;
 				}
@@ -523,18 +528,20 @@ public class Picture extends SimplePicture {
 		int width = this.getWidth();
 		Pixel currPixel = null;
 
-		ArrayList<ArrayList<Integer>> blackLocations = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> blackLocations = new ArrayList<Integer>();
 		ArrayList<Integer> tempBinarySet = new ArrayList<Integer>();
 		int binarySetIndex = 0;
 		int pastIndex = 0;
 		int tempIndex = 0;
+		outerloop:
 		for(int row = 0; row < height; row++) {
 			for(int col = 0; col< width; col++) {
+				//if(pixels[row][col].getBlue() % 2 == 0) pixels[row][col].setColor(Color.PINK);
 				binarySetIndex = (pixels[row][col].getGreen() % 2 == 0) ? 0 : 1;
 				if(binarySetIndex != pastIndex) {
 					if(tempIndex%2==0 && tempIndex>0)
-						if(pixels[getIntFromBinary(tempBinarySet)][getIntFromBinary(blackLocations.get(blackLocations.size() - 1))].getBlue() % 2 != 0) break;
-					blackLocations.add(tempBinarySet);
+						if(pixels[getIntFromBinary(tempBinarySet)][blackLocations.get(blackLocations.size() - 1)].getBlue() % 2 == 0) break outerloop;
+					blackLocations.add(getIntFromBinary(tempBinarySet));
 					tempIndex++;
 					tempBinarySet = new ArrayList<Integer>();
 				}
@@ -552,14 +559,14 @@ public class Picture extends SimplePicture {
 		Picture messagePicture = new Picture(height,width);
 		Pixel[][] messagePixels = messagePicture.getPixels2D();
 		System.out.println(blackLocations.get(1));
-		System.out.println(getIntFromBinary(blackLocations.get(1)));
+		System.out.println(blackLocations.get(1));
 		int row = 0;
 		int col = 0;
 		for(int i = 0; i < blackLocations.size()/2; i+=2) {
-			row = getIntFromBinary(blackLocations.get(i));
-			col = getIntFromBinary(blackLocations.get(i+1));
-			System.out.println("row: " + row + " col: " + col);
-			System.out.println("row: " + blackLocations.get(i) + " col: " + blackLocations.get(i+1));
+			row = blackLocations.get(i);
+			col = blackLocations.get(i+1);
+			//System.out.println("row: " + row + " col: " + col);
+			//System.out.println("row: " + blackLocations.get(i) + " col: " + blackLocations.get(i+1));
 			if(row < height && col < width){
 				messagePixels[row][col].setColor(Color.BLACK);
 			}
